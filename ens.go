@@ -41,6 +41,9 @@ func (x *Ens) checkName(name string) error {
 	if len(name) > 4 && name[len(name)-4:] == ".eth" {
 		name = name[:len(name)-4]
 	}
+	if name == "" {
+		return nil
+	}
 	// todo: 这个得到的只是 CONTROLLER, 并不是 REGISTRANT; 比如: https://app.ens.domains/name/bigger.eth
 	owner, err := x.registry.Owner(name + ".eth")
 	if err != nil {
