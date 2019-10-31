@@ -1,0 +1,45 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/bower_components
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+*.launch
+.settings/
+
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# project
+/build
+/vendor/*
+!/vendor/vendor.json
+
+
+# misc
+tmp/*
+coverage.txt
+
+bak.*
+
+*.log
+*.db
+*.out
+
+*.exe
+*.dll
+*.so
+*.dylib
+
+# `go test -c`
+*.test
+.pid
+
+*.prof
+build
