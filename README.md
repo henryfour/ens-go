@@ -1,6 +1,6 @@
 # ENS Go
 
-go toolbox for ens
+A simple gadget of ens.
 
 ## Links
 

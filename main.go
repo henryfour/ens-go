@@ -11,18 +11,20 @@ import (
 var (
 	ApiFlag = cli.StringFlag{
 		Name:     "api",
-		Usage:    "api url",
+		Usage:    "api url (required)",
 		Required: true,
 	}
 	InputFile = cli.StringFlag{
 		Name:     "file,f",
-		Usage:    "input file",
+		Usage:    "input file contains ens names, one name per line",
 	}
 )
 
 func main() {
 	app := cli.NewApp()
 	app.Version = "0.0.1"
+	app.Name = "ens-go"
+	app.Description = "A simple gadget of ens"
 	app.Flags = []cli.Flag{
 		ApiFlag,
 		InputFile,
