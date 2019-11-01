@@ -10,7 +10,7 @@ var cmdRobot = cli.Command{
 	Name:      "robot",
 	ShortName: "r",
 	Usage:     "run ens-go robot",
-	Flags:     []cli.Flag{flagApi, flagToken},
+	Flags:     []cli.Flag{flagApi, flagToken, flagUsers},
 	Action:    actionRobot,
 }
 
@@ -19,7 +19,7 @@ func actionRobot(c *cli.Context) error {
 	if err != nil {
 		return err
 	}
-	r := robot.NewRobot(ens, fvToken)
+	r := robot.NewRobot(ens, fvToken, fvUsers)
 	if err = r.Start(); err != nil {
 		return err
 	}

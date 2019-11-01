@@ -28,4 +28,11 @@ var (
 		Required:    true,
 		Destination: &fvToken,
 	}
+	fvUsers   cli.StringSlice
+	flagUsers = cli.StringSliceFlag{
+		Name:  "user,u",
+		Usage: "users who can use this robot",
+		Required: true,
+		Value: &fvUsers,
+	}
 )

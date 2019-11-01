@@ -1,29 +1,25 @@
 package robot
 
 import (
+	"github.com/ethereum/go-ethereum/log"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"strings"
 )
 
 func (x *Robot) onUpdate(u tgbotapi.Update) error {
-	if u.Message == nil {
-		return nil
-	}
-
-	// private msg
-	if u.Message.Chat.IsPrivate() {
+	if u.Message != nil && u.Message.Chat.IsPrivate() {
 		return x.handleMsg(u.Message)
-	}
-
-	// group msg
-	if u.Message.Chat.IsGroup() || u.Message.Chat.IsSuperGroup() {
-		return nil
 	}
 	return nil
 }
 
 func (x *Robot) handleMsg(msg *tgbotapi.Message) error {
+	u := strings.ToLower(msg.From.UserName)
+	if _, ok := x.users[u]; !ok {
+		return nil
+	}
 	names := strings.Fields(msg.Text)
+	log.Info("query ens: " + strings.Join(names, ","), "user", u)
 	domains := x.ens.GetDomainInfos(names)
 	rsp := ""
 	for _, d := range domains {

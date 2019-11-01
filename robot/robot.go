@@ -6,6 +6,7 @@ import (
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/prometheus/common/log"
+	"strings"
 	"sync"
 	"time"
 )
@@ -15,23 +16,29 @@ type Robot struct {
 	running  bool
 	quit     chan struct{}
 	stopping chan struct{}
+	mutex    sync.Mutex
 
 	ens   *core.Ens
 	token string
 	api   *tgbotapi.BotAPI
-	mutex sync.Mutex
+	users map[string]struct{}
 }
 
-func NewRobot(ens *core.Ens, token string) *Robot {
-	return &Robot{
+func NewRobot(ens *core.Ens, token string, users []string) *Robot {
+	x := &Robot{
 		running:  false,
 		quit:     make(chan struct{}),
 		stopping: make(chan struct{}),
+		mutex:    sync.Mutex{},
 		ens:      ens,
 		token:    token,
 		api:      nil,
-		mutex:    sync.Mutex{},
+		users: make(map[string]struct{}),
 	}
+	for _, u := range users {
+		x.users[strings.ToLower(u)] = struct{}{}
+	}
+	return x
 }
 
 func (x *Robot) Start() error {

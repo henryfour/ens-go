@@ -55,6 +55,7 @@ func (x *Ens) GetDomainInfo(name string) (*DomainInfo, error) {
 	if name == "" {
 		return nil, nil
 	}
+	log.Debug("query ens registry for " + name)
 	// todo: 这个得到的只是 CONTROLLER, 并不是 REGISTRANT; 比如: https://app.ens.domains/name/bigger.eth
 	owner, err := x.registry.Owner(name + ".eth")
 	if err != nil {
