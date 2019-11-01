@@ -4,9 +4,9 @@ BUILD_FLAGS := -tags "$(build_tags)" -ldflags '$(ldflags)'
 build: clean go.sum
 
 ifeq ($(OS),Windows_NT)
-	go build -mod=readonly $(BUILD_FLAGS) -o build/ens-go.exe .
+	go build -mod=readonly $(BUILD_FLAGS) -o build/ens-go.exe ./cmd
 else
-	go build -mod=readonly $(BUILD_FLAGS) -o build/ens-go
+	go build -mod=readonly $(BUILD_FLAGS) -o build/ens-go ./cmd
 endif
 
 build-linux:
