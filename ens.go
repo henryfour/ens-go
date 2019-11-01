@@ -6,6 +6,7 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/wealdtech/go-ens/v3"
 	"strings"
+	"time"
 )
 
 var zeroAddr = common.Address{}
@@ -66,6 +67,7 @@ func CheckNames(api string, names []string) error {
 		if err = x.checkName(name); err != nil {
 			fmt.Printf("failed to check %s: err=%s\n", name, err.Error())
 		}
+		time.Sleep(20 * time.Millisecond)
 	}
 	return nil
 }

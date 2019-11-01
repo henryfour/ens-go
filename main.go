@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"github.com/urfave/cli"
 	"io/ioutil"
 	"os"
@@ -31,9 +30,6 @@ func main() {
 	}
 	app.Action = func(c *cli.Context) error {
 		api := c.String(ApiFlag.Name)
-		if api == "" {
-			return errors.New("api url is required")
-		}
 		names := c.Args()
 		filename := c.String("file")
 		if filename != "" {
@@ -41,7 +37,7 @@ func main() {
 			if err != nil {
 				return err
 			}
-			names = strings.Split(string(content), "\n")
+			names = strings.Fields(string(content))
 		}
 		return CheckNames(api, names)
 	}
