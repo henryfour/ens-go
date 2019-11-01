@@ -1,6 +1,8 @@
 package main
 
 import (
+	"ens-go/core"
+	"ens-go/robot"
 	"github.com/urfave/cli"
 )
 
@@ -13,5 +15,16 @@ var cmdRobot = cli.Command{
 }
 
 func actionRobot(c *cli.Context) error {
-	return nil
+	ens, err := core.NewEns(fvApi)
+	if err != nil {
+		return err
+	}
+	r := robot.NewRobot(ens, fvToken)
+	if err = r.Start(); err != nil {
+		return err
+	}
+	TrapSignal(func() {
+		r.Stop()
+	})
+	select {}
 }

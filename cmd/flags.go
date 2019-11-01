@@ -19,6 +19,7 @@ var (
 		Usage:       "input file contains ens names, one name per line",
 		Destination: &fvFile,
 	}
+
 	// robot
 	fvToken   string
 	flagToken = cli.StringFlag{

@@ -1,7 +1,7 @@
 package main
 
 import (
-	ens "ens-go"
+	"ens-go/core"
 	"fmt"
 	"github.com/urfave/cli"
 	"io/ioutil"
@@ -31,12 +31,12 @@ func actionQuery(c *cli.Context) error {
 }
 
 func queryDomainInfos(api string, names []string) error {
-	x, err := ens.NewEns(api)
+	ens, err := core.NewEns(api)
 	if err != nil {
 		return err
 	}
 	for _, name := range names {
-		di, err := x.GetDomainInfo(name)
+		di, err := ens.GetDomainInfo(name)
 		if err != nil {
 			fmt.Printf("failed to check %s: err=%s\n", name, err)
 		} else {

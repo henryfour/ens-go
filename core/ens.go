@@ -1,4 +1,4 @@
-package ens
+package core
 
 import (
 	"fmt"
@@ -68,7 +68,7 @@ func (x *Ens) GetDomainInfo(name string) (*DomainInfo, error) {
 	return d, nil
 }
 
-func (x *Ens) GetDomainInfos(api string, names []string) ([]*DomainInfo, error) {
+func (x *Ens) GetDomainInfos(names []string) []*DomainInfo {
 	dis := make([]*DomainInfo, 0, len(names))
 	for _, name := range names {
 		di, err := x.GetDomainInfo(name)
@@ -79,5 +79,5 @@ func (x *Ens) GetDomainInfos(api string, names []string) ([]*DomainInfo, error) 
 		}
 		time.Sleep(20 * time.Millisecond)
 	}
-	return dis, nil
+	return dis
 }

@@ -1,8 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"github.com/urfave/cli"
 	"os"
+	"os/signal"
+	"syscall"
 )
 
 func main() {
@@ -19,4 +22,18 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func TrapSignal(cb func()) {
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		for sig := range c {
+			fmt.Printf("signal captured: %v, exiting...\n", sig)
+			if cb != nil {
+				cb()
+			}
+			os.Exit(0)
+		}
+	}()
 }
