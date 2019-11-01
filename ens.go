@@ -1,9 +1,10 @@
-package main
+package ens
 
 import (
 	"fmt"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/prometheus/common/log"
 	"github.com/wealdtech/go-ens/v3"
 	"strings"
 	"time"
@@ -16,16 +17,25 @@ type Ens struct {
 	registry *ens.Registry
 }
 
+type DomainInfo struct {
+	Name      string
+	Owner     string
+	Available bool
+}
+
+func (d DomainInfo) String() string {
+	avs := "✔"
+	if !d.Available {
+		avs = "✘"
+	}
+	return fmt.Sprintf("%s %s %s", avs, d.Name, d.Owner)
+}
+
 func NewEns(api string) (*Ens, error) {
 	client, err := ethclient.Dial(api)
 	if err != nil {
 		return nil, err
 	}
-	// netId, err := client.NetworkID(context.Background())
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// log.Printf("netId=%v\n", netId.String())
 	registry, err := ens.NewRegistry(client)
 	if err != nil {
 		return nil, err
@@ -37,37 +47,37 @@ func NewEns(api string) (*Ens, error) {
 }
 
 // 查询域名是否被注册
-func (x *Ens) checkName(name string) error {
+func (x *Ens) GetDomainInfo(name string) (*DomainInfo, error) {
 	name = strings.ToLower(strings.TrimSpace(name))
 	if len(name) > 4 && name[len(name)-4:] == ".eth" {
 		name = name[:len(name)-4]
 	}
 	if name == "" {
-		return nil
+		return nil, nil
 	}
 	// todo: 这个得到的只是 CONTROLLER, 并不是 REGISTRANT; 比如: https://app.ens.domains/name/bigger.eth
 	owner, err := x.registry.Owner(name + ".eth")
 	if err != nil {
-		return err
+		return nil, err
 	}
-	if owner == zeroAddr {
-		fmt.Printf("owner: %s ✔ %s\n", owner.Hex(), name)
-	} else {
-		fmt.Printf("owner: %s ✘ %s\n", owner.Hex(), name)
+	d := &DomainInfo{
+		Name:      name,
+		Owner:     owner.Hex(),
+		Available: owner == zeroAddr,
 	}
-	return nil
+	return d, nil
 }
 
-func CheckNames(api string, names []string) error {
-	x, err := NewEns(api)
-	if err != nil {
-		return err
-	}
+func (x *Ens) GetDomainInfos(api string, names []string) ([]*DomainInfo, error) {
+	dis := make([]*DomainInfo, 0, len(names))
 	for _, name := range names {
-		if err = x.checkName(name); err != nil {
-			fmt.Printf("failed to check %s: err=%s\n", name, err.Error())
+		di, err := x.GetDomainInfo(name)
+		if err != nil {
+			log.Info("failed to check %s: err=%s\n", name, err)
+		} else {
+			dis = append(dis, di)
 		}
 		time.Sleep(20 * time.Millisecond)
 	}
-	return nil
+	return dis, nil
 }

@@ -1,10 +1,13 @@
 package main
 
 import (
+	"ens-go"
+	"fmt"
 	"github.com/urfave/cli"
 	"io/ioutil"
 	"os"
 	"strings"
+	"time"
 )
 
 var (
@@ -39,10 +42,27 @@ func main() {
 			}
 			names = strings.Fields(string(content))
 		}
-		return CheckNames(api, names)
+		return queryDomainInfos(api, names)
 	}
 	err := app.Run(os.Args)
 	if err != nil {
 		panic(err)
 	}
+}
+
+func queryDomainInfos(api string, names []string) error {
+	x, err := ens.NewEns(api)
+	if err != nil {
+		return err
+	}
+	for _, name := range names {
+		di, err := x.GetDomainInfo(name)
+		if err != nil {
+			fmt.Printf("failed to check %s: err=%s\n", name, err)
+		} else {
+			println(di.String())
+		}
+		time.Sleep(20 * time.Millisecond)
+	}
+	return nil
 }
