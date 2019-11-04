@@ -5,10 +5,8 @@ import (
 	"errors"
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
-	"github.com/prometheus/common/log"
 	"strings"
 	"sync"
-	"time"
 )
 
 // Robot is a telegram robot
@@ -47,13 +45,13 @@ func (x *Robot) Start() error {
 	if x.running {
 		return errors.New("robot is running already")
 	}
-	log.Info("robot is starting")
+	println("robot is starting")
 	var err error
 	x.api, err = tgbotapi.NewBotAPI(x.token)
 	if err != nil {
 		return err
 	}
-	log.Info(fmt.Sprintf("robot %s has started", x.api.Self.UserName))
+	fmt.Printf("robot %s has started\n", x.api.Self.UserName)
 
 	x.quit = make(chan struct{})
 	x.running = true
@@ -62,7 +60,7 @@ func (x *Robot) Start() error {
 }
 
 func (x *Robot) Stop() {
-	log.Info("robot is stopping")
+	fmt.Println("robot is stopping")
 	x.mutex.Lock()
 	defer x.mutex.Unlock()
 	if x.running {
@@ -70,7 +68,7 @@ func (x *Robot) Stop() {
 		<-x.stopping
 		x.running = false
 	}
-	log.Info("robot has stopped")
+	fmt.Println("robot has stopped")
 }
 
 func (x *Robot) loop() {
@@ -78,13 +76,10 @@ func (x *Robot) loop() {
 	u := tgbotapi.NewUpdate(0)
 	updates, err := x.api.GetUpdatesChan(u)
 	if err != nil {
-		log.Error("robot loop start failed", err)
+		fmt.Println("robot loop start failed", err)
 		close(x.stopping)
 		return
 	}
-
-	tick := 10 * time.Millisecond
-	timer := time.NewTimer(0)
 
 	for {
 		select {
@@ -93,10 +88,8 @@ func (x *Robot) loop() {
 			return
 		case update := <-updates:
 			if err := x.onUpdate(update); err != nil {
-				log.Error("handle update failed", err)
+				fmt.Println("handle update failed", err)
 			}
-		case <-timer.C:
-			timer.Reset(tick)
 		}
 	}
 }
@@ -105,6 +98,6 @@ func (x *Robot) sendReply(msg *tgbotapi.Message, text string) {
 	reply := tgbotapi.NewMessage(msg.Chat.ID, text)
 	// reply.ReplyToMessageID = msg.MessageID
 	if _, err := x.api.Send(reply); err != nil {
-		log.Error("Send reply failed", "Err", err)
+		fmt.Println("Send reply failed", "Err", err)
 	}
 }

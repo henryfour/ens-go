@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/prometheus/common/log"
+	"github.com/ethereum/go-ethereum/log"
 	"github.com/wealdtech/go-ens/v3"
 	"strings"
 	"time"
@@ -74,7 +74,7 @@ func (x *Ens) GetDomainInfos(names []string) []*DomainInfo {
 	for _, name := range names {
 		di, err := x.GetDomainInfo(name)
 		if err != nil {
-			log.Info("failed to check %s: err=%s\n", name, err)
+			fmt.Printf("failed to check %s: err=%s\n", name, err)
 		} else {
 			dis = append(dis, di)
 		}

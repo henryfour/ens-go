@@ -1,7 +1,6 @@
 package robot
 
 import (
-	"github.com/ethereum/go-ethereum/log"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"strings"
 )
@@ -19,7 +18,7 @@ func (x *Robot) handleMsg(msg *tgbotapi.Message) error {
 		return nil
 	}
 	names := strings.Fields(msg.Text)
-	log.Info("query ens: " + strings.Join(names, ","), "user", u)
+	println("query ens: " + strings.Join(names, ","), "user", u)
 	domains := x.ens.GetDomainInfos(names)
 	rsp := ""
 	for _, d := range domains {
